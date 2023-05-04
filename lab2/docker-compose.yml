@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  openssl:
+    build:
+      context: .
+      target: openssl
+    container_name: openssl
+    volumes:
+      - cert_volume:/certs
+
+  app:
+    build:
+      context: .
+      target: app
+    container_name: app
+    restart: unless-stopped
+    ports:
+      - "7070:80"
+      - "443:443"
+    volumes:
+      - ./static:/usr/share/nginx/html
+      - ./nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - cert_volume:/certs:ro
+
+
+volumes:
+  cert_volume:
